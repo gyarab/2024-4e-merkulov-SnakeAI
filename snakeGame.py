@@ -1,4 +1,7 @@
-import pygame, sys, time, random
+import pygame
+import sys
+import time
+import random
 from graph import Graph
 
 # Difficulty settings
@@ -46,9 +49,9 @@ snake_body = [[(cell_size * 3), cell_size], [(cell_size * 3) - cell_size, cell_s
 
 def free_for_food():
     available_food_spawn_places = []
-    for x in range(number_of_nodes_on_side):
-        for y in range(number_of_nodes_on_side):
-            position = [x * cell_size, y * cell_size]
+    for i in range(number_of_nodes_on_side):
+        for j in range(number_of_nodes_on_side):
+            position = [i * cell_size, j * cell_size]
             if position not in snake_body:
                 available_food_spawn_places.append(position)
     return available_food_spawn_places
@@ -62,7 +65,6 @@ food_spawn = True
 graph = Graph(number_of_nodes, cell_size, number_of_nodes_on_side)
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
-#graph.display_matrix()
 
 # Hamiltonian cycle path (example for a 10x10 grid)
 hamiltonian_cycle = graph.find_hamiltonian_cycle()
@@ -102,6 +104,7 @@ def show_score(choice, color, font, size):
         score_rect.midtop = (50, 10)  # Score moved to top-left corner
     game_window.blit(score_surface, score_rect)
 
+
 def winning():
     font = pygame.font.SysFont('comicsans', 60, True)
     winning_surface = font.render('YOU WON', True, black)
@@ -113,11 +116,12 @@ def winning():
     # Keep the window open until the player closes it
     waiting = True
     while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for winning_event in pygame.event.get():
+            if winning_event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         pygame.time.delay(100)
+
 
 # Main logic
 while True:
