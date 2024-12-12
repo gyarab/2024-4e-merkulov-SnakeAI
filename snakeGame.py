@@ -1,7 +1,11 @@
-import pygame
+#!/usr/bin/env python3
+
+import random
 import sys
 import time
-import random
+
+import pygame
+
 from graph import Graph
 
 # Difficulty settings

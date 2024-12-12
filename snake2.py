@@ -1,5 +1,8 @@
-import pygame,sys,random
+import pygame
+import random
+import sys
 from pygame.math import Vector2
+
 
 class SNAKE:
     def __init__(self):
@@ -7,24 +10,24 @@ class SNAKE:
         self.direction = Vector2(0,0)
         self.new_block = False
 
-        self.head_up = pygame.image.load('Graphics/head_up.png').convert_alpha()
-        self.head_down = pygame.image.load('Graphics/head_down.png').convert_alpha()
-        self.head_right = pygame.image.load('Graphics/head_right.png').convert_alpha()
-        self.head_left = pygame.image.load('Graphics/head_left.png').convert_alpha()
+        self.head_up = pygame.draw.rect(screen, (0, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.head_down = pygame.draw.rect(screen, (0, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.head_right = pygame.draw.rect(screen, (0, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.head_left = pygame.draw.rect(screen, (0, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
 
-        self.tail_up = pygame.image.load('Graphics/tail_up.png').convert_alpha()
-        self.tail_down = pygame.image.load('Graphics/tail_down.png').convert_alpha()
-        self.tail_right = pygame.image.load('Graphics/tail_right.png').convert_alpha()
-        self.tail_left = pygame.image.load('Graphics/tail_left.png').convert_alpha()
+        self.tail_up = pygame.draw.rect(screen, (30, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.tail_down = pygame.draw.rect(screen, (30, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.tail_right = pygame.draw.rect(screen, (30, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.tail_left = pygame.draw.rect(screen, (30, 220, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
 
-        self.body_vertical = pygame.image.load('Graphics/body_vertical.png').convert_alpha()
-        self.body_horizontal = pygame.image.load('Graphics/body_horizontal.png').convert_alpha()
+        self.body_vertical = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size - 2, cell_size))
+        self.body_horizontal = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size, cell_size - 2))
 
-        self.body_tr = pygame.image.load('Graphics/body_tr.png').convert_alpha()
-        self.body_tl = pygame.image.load('Graphics/body_tl.png').convert_alpha()
-        self.body_br = pygame.image.load('Graphics/body_br.png').convert_alpha()
-        self.body_bl = pygame.image.load('Graphics/body_bl.png').convert_alpha()
-        self.crunch_sound = pygame.mixer.Sound('Sound/crunch.wav')
+        self.body_tr = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.body_tl = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.body_br = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        self.body_bl = pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(0, 0, cell_size - 2, cell_size - 2))
+        # self.crunch_sound = pygame.mixer.Sound('Sound/crunch.wav')
 
     def draw_snake(self):
         self.update_head_graphics()
@@ -98,7 +101,7 @@ class FRUIT:
 
     def draw_fruit(self):
         fruit_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
-        screen.blit(apple,fruit_rect)
+        #screen.blit(apple,fruit_rect)
     #pygame.draw.rect(screen,(126,166,114),fruit_rect)
 
     def randomize(self):
@@ -163,13 +166,13 @@ class MAIN:
         score_x = int(cell_size * cell_number - 60)
         score_y = int(cell_size * cell_number - 40)
         score_rect = score_surface.get_rect(center = (score_x,score_y))
-        apple_rect = apple.get_rect(midright = (score_rect.left,score_rect.centery))
-        bg_rect = pygame.Rect(apple_rect.left,apple_rect.top,apple_rect.width + score_rect.width + 6,apple_rect.height)
+        # apple_rect = apple.get_rect(midright = (score_rect.left,score_rect.centery))
+        #bg_rect = pygame.Rect(apple_rect.left,apple_rect.top,apple_rect.width + score_rect.width + 6,apple_rect.height)
 
-        pygame.draw.rect(screen,(167,209,61),bg_rect)
+        #pygame.draw.rect(screen,(167,209,61),bg_rect)
         screen.blit(score_surface,score_rect)
-        screen.blit(apple,apple_rect)
-        pygame.draw.rect(screen,(56,74,12),bg_rect,2)
+        # screen.blit(apple,apple_rect)
+        #pygame.draw.rect(screen,(56,74,12),bg_rect,2)
 
 pygame.mixer.pre_init(44100,-16,2,512)
 pygame.init()
@@ -177,8 +180,8 @@ cell_size = 40
 cell_number = 20
 screen = pygame.display.set_mode((cell_number * cell_size,cell_number * cell_size))
 clock = pygame.time.Clock()
-apple = pygame.image.load('Graphics/apple.png').convert_alpha()
-game_font = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 25)
+# apple = pygame.Rect(screen, (230, 0, 0), (cell_size // 2, cell_size // 2), cell_size // 2)
+game_font = pygame.font.SysFont('consolas', 25)
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE,150)
