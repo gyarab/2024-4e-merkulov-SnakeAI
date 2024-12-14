@@ -9,7 +9,7 @@ import pygame
 from graph import Graph
 
 # Difficulty settings
-difficulty = 5
+difficulty = 4
 
 # Game grid size
 number_of_nodes = 16
@@ -46,17 +46,19 @@ gray = pygame.Color(25, 25, 25)
 fps_controller = pygame.time.Clock()
 
 # Game variables
-snake_pos = [(cell_size * 3), cell_size]
-snake_body = [[(cell_size * 3), cell_size], [(cell_size * 3) - cell_size, cell_size],
-              [(cell_size * 3) - (2 * cell_size), cell_size]]
+snake_head = (cell_size * 3, cell_size)
+snake_body = [
+    (cell_size * 3 - cell_size, cell_size),
+    (cell_size * 3 - 2 * cell_size, cell_size)
+]
 
 
 def free_for_food():
     available_food_spawn_places = []
     for i in range(number_of_nodes_on_side):
         for j in range(number_of_nodes_on_side):
-            position = [i * cell_size, j * cell_size]
-            if position not in snake_body:
+            position = (i * cell_size, j * cell_size)
+            if position not in snake_body and position != snake_head:
                 available_food_spawn_places.append(position)
     return available_food_spawn_places
 
@@ -71,10 +73,19 @@ number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
 
 # Hamiltonian cycle path (example for a 10x10 grid)
-hamiltonian_cycle = graph.find_hamiltonian_cycle()
+hamiltonian_cycle = [
+    (0, 0), (0, cell_size), (0, cell_size * 2), (0, cell_size * 3),
+    (cell_size, cell_size * 3), (cell_size * 2, cell_size * 3), (cell_size * 3, cell_size * 3),
+    (cell_size * 3, cell_size * 2), (cell_size * 2, cell_size * 2), (cell_size, cell_size * 2),
+    (cell_size, cell_size), (cell_size * 2, cell_size), (cell_size * 3, cell_size),
+    (cell_size * 3, 0), (cell_size * 2, 0), (cell_size, 0)
+]
 ''''''
 # Initialize direction index for Hamiltonian cycle
-direction_index = graph.game_to_graph(snake_body)[0]
+for i in range(len(hamiltonian_cycle)):
+    if hamiltonian_cycle[i] == snake_head:
+        direction_index = i
+        break
 
 score = 0
 
@@ -143,25 +154,26 @@ while True:
         print("Congratulations! You've completed the game!")
         running = False
         winning()  # End the game loop
-
+    '''
     # Move the snake along the Hamiltonian cycle
     if direction_index < len(hamiltonian_cycle):
-        snake_pos = list(hamiltonian_cycle[direction_index])
+        snake_head = hamiltonian_cycle[direction_index]
         direction_index += 1
     else:
         # If the snake has completed the cycle, reset to the beginning
         direction_index = 0
-        snake_pos = list(hamiltonian_cycle[direction_index])
+        snake_head = hamiltonian_cycle[direction_index]
         direction_index += 1
-
+    '''
     # Snake body growing mechanism
-    snake_body.insert(0, list(snake_pos))
-    if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
+    snake_body.insert(0, snake_head)
+    if snake_head == food_pos:
         score += 1
         food_spawn = False
         food_spawn_places = free_for_food()
     else:
-        snake_body.pop()
+        if len(snake_body) > 3:
+            snake_body.pop()
 
     # Spawning food on the screen
 
@@ -187,8 +199,12 @@ while True:
     for pos in snake_body:
         # Draw the black border (slightly larger rectangle)
         pygame.draw.rect(game_window, black, pygame.Rect(pos[0], pos[1] + 50, cell_size, cell_size))
-        # Draw the green snake body inside the black border
-        pygame.draw.rect(game_window, green, pygame.Rect(pos[0] + 2, pos[1] + 52, cell_size - 4, cell_size - 4))
+        # Draw the green snake body and blue snake head inside the black border
+        if pos == snake_head:
+            pygame.draw.rect(game_window, blue,
+                             pygame.Rect(snake_head[0] + 2, snake_head[1] + 52, cell_size - 4, cell_size - 4))
+        else:
+            pygame.draw.rect(game_window, green, pygame.Rect(pos[0] + 2, pos[1] + 52, cell_size - 4, cell_size - 4))
 
     # Draw the food
     pygame.draw.circle(game_window, red, (food_pos[0] + cell_size // 2, food_pos[1] + 50 + cell_size // 2),
@@ -201,12 +217,12 @@ while True:
     game_window.blit(button_text, (button_rect.x + 10, button_rect.y + 5))
 
     # Game Over conditions
-    if snake_pos[0] < 0 or snake_pos[0] > frame_size_x - cell_size:
+    if snake_head[0] < 0 or snake_head[0] > frame_size_x - cell_size:
         game_over()
-    if snake_pos[1] < 0 or snake_pos[1] > frame_size_y - cell_size:
+    if snake_head[1] < 0 or snake_head[1] > frame_size_y - cell_size:
         game_over()
     for block in snake_body[1:]:
-        if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
+        if snake_head == block:
             game_over()
 
     # Draw a line to separate UI from the grid
