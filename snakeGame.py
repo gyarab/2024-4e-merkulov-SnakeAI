@@ -10,7 +10,7 @@ from algos import *
 from game_state import GameState
 
 # Difficulty settings
-difficulty = 6
+difficulty = 10
 
 # Game grid size
 number_of_nodes = 100
