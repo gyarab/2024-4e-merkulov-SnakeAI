@@ -6,18 +6,19 @@ import time
 
 import pygame
 
-from graph import Graph
+from algos import *
+from game_state import GameState
 
 # Difficulty settings
-difficulty = 4
+difficulty = 6
 
 # Game grid size
-number_of_nodes = 16
-number_of_nodes_on_side = 4
+number_of_nodes = 100
+number_of_nodes_on_side = 10
 
 # Window size
-frame_size_x = 500
-frame_size_y = 500
+frame_size_x = 1000
+frame_size_y = 1000
 
 # Cell size (larger than before)
 cell_size = frame_size_x // number_of_nodes_on_side
@@ -48,6 +49,7 @@ fps_controller = pygame.time.Clock()
 # Game variables
 snake_head = (cell_size * 3, cell_size)
 snake_body = [
+    snake_head,
     (cell_size * 3 - cell_size, cell_size),
     (cell_size * 3 - 2 * cell_size, cell_size)
 ]
@@ -63,14 +65,58 @@ def free_for_food():
     return available_food_spawn_places
 
 
+def game_to_neighbors(snake_game_body):
+    snake_neighbors_body = []
+    if isinstance(snake_game_body, list):
+        snake_body_for_neighbors = [(x // cell_size, y // cell_size) for x, y in snake_game_body]
+        for i, j in snake_body_for_neighbors:
+            snake_neighbors_body.append((i, j))
+        return snake_neighbors_body
+    else:
+        x, y = snake_game_body
+        i = x // cell_size
+        j = y // cell_size
+        snake_neighbors_body = (i, j)
+        return snake_neighbors_body
+
+
+def neighbors_to_snake_body(snake_neighbors_body):
+    snake_body_game = []
+    if isinstance(snake_neighbors_body, list):
+        snake_body_from_neighbors = [(x * cell_size, y * cell_size) for x, y in snake_neighbors_body]
+        for i, j in snake_body_from_neighbors:
+            snake_body_game.append((i, j))
+        return snake_body_game
+    else:
+        x, y = snake_neighbors_body
+        i = x * cell_size
+        j = y * cell_size
+        snake_body_game = (i, j)
+        return snake_body_game
+
+
 food_spawn_places = free_for_food()
 food_pos = random.choice(food_spawn_places)
 food_spawn = True
 
+n_snake_head = game_to_neighbors(snake_head)
+n_snake_body = game_to_neighbors(snake_body)
+n_food_pos = game_to_neighbors(food_pos)
+
+game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
+path = iterative_deepening_dfs(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+path_for_following = path.get_all_head_positions()
+path_for_following.pop()
+path_for_following.reverse()
+path_for_following = neighbors_to_snake_body(path_for_following)
+food_pos = neighbors_to_snake_body(n_food_pos)
+
+'''
 # Graph initialization
 graph = Graph(number_of_nodes, cell_size, number_of_nodes_on_side)
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
+'''
 
 # Hamiltonian cycle path (example for a 10x10 grid)
 hamiltonian_cycle = [
@@ -82,11 +128,13 @@ hamiltonian_cycle = [
 ]
 ''''''
 # Initialize direction index for Hamiltonian cycle
+'''
 for i in range(len(hamiltonian_cycle)):
     if hamiltonian_cycle[i] == snake_head:
         direction_index = i
         break
-
+'''
+direction_index = 0
 score = 0
 
 show_grid = True  # Flag to toggle grid
@@ -165,6 +213,11 @@ while True:
         snake_head = hamiltonian_cycle[direction_index]
         direction_index += 1
     '''
+
+    if direction_index < len(path_for_following):
+        snake_head = path_for_following[direction_index]
+        direction_index += 1
+
     # Snake body growing mechanism
     snake_body.insert(0, snake_head)
     if snake_head == food_pos:
@@ -182,6 +235,19 @@ while True:
         if food_spawn_places:
             food_pos = random.choice(food_spawn_places)
             food_spawn = True
+            n_snake_head = game_to_neighbors(snake_head)
+            n_snake_body = game_to_neighbors(snake_body)
+            n_food_pos = game_to_neighbors(food_pos)
+            game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
+            path = iterative_deepening_dfs(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+            path_for_following = path.get_all_head_positions()
+            path_for_following.pop()
+            path_for_following.reverse()
+            path_for_following = neighbors_to_snake_body(path_for_following)
+            food_pos = neighbors_to_snake_body(n_food_pos)
+            snake_body = neighbors_to_snake_body(n_snake_body)
+            snake_head = neighbors_to_snake_body(n_snake_head)
+            direction_index = 0
         else:
             print("No valid food spawn places available.")
 

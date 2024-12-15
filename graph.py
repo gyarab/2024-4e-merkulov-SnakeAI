@@ -54,7 +54,6 @@ class Graph:
             snake_graph_body.append(j * self.number_of_nodes_on_side + i)
             return snake_graph_body
 
-
     def graph_to_game(self, snake_graph_body):
         snake_game_body = []
         for telo in snake_graph_body:
