@@ -1,4 +1,4 @@
-from game_logic import GameState
+from game_state import GameState
 
 
 def dfs(game_state: GameState, apple_position: tuple[int, int], n_rows: int, n_cols: int):
