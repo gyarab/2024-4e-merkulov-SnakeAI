@@ -10,11 +10,11 @@ from algos import *
 from game_state import GameState
 
 # Difficulty settings
-difficulty = 10
+difficulty = 3
 
 # Game grid size
-number_of_nodes = 100
-number_of_nodes_on_side = 10
+number_of_nodes = 16
+number_of_nodes_on_side = 4
 
 # Window size
 frame_size_x = 1000
@@ -96,7 +96,7 @@ def neighbors_to_snake_body(snake_neighbors_body):
 
 
 food_spawn_places = free_for_food()
-food_pos = random.choice(food_spawn_places)
+food_pos = (cell_size, cell_size * 3)  # random.choice(food_spawn_places)
 food_spawn = True
 
 n_snake_head = game_to_neighbors(snake_head)
@@ -104,7 +104,7 @@ n_snake_body = game_to_neighbors(snake_body)
 n_food_pos = game_to_neighbors(food_pos)
 
 game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-path = iterative_deepening_dfs(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
 path_for_following = path.get_all_head_positions()
 path_for_following.pop()
 path_for_following.reverse()
@@ -138,9 +138,10 @@ direction_index = 0
 score = 0
 
 show_grid = True  # Flag to toggle grid
-
+pause_game = False
 # Button to toggle grid visibility (now in top-right corner)
 button_rect = pygame.Rect(frame_size_x - 90, 10, 80, 30)  # Button moved to top-right corner
+button_pause = pygame.Rect(frame_size_x - (frame_size_x // 2), 10, 80, 30)
 
 
 # Game Over
@@ -186,6 +187,20 @@ def winning():
         pygame.time.delay(100)
 
 
+def pause():
+    # Keep the window open until the player closes it
+    waiting = True
+    while waiting:
+        for pausing_event in pygame.event.get():
+            if pausing_event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif pausing_event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(pausing_event.pos):
+                    waiting = False
+        pygame.clock.tick(15)
+
+
 # Main logic
 while True:
     for event in pygame.event.get():
@@ -196,6 +211,9 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if button_rect.collidepoint(event.pos):
                 show_grid = not show_grid
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if button_rect.collidepoint(event.pos):
+                pause_game = not pause_game
 
     # Check if the snake has reached the winning length
     if len(snake_body) >= number_of_nodes - 1:
@@ -239,7 +257,7 @@ while True:
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
             game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-            path = iterative_deepening_dfs(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
             path_for_following = path.get_all_head_positions()
             path_for_following.pop()
             path_for_following.reverse()
@@ -253,6 +271,10 @@ while True:
 
     # Fill the game window
     game_window.fill(black)
+
+    if pause_game:
+        pause()
+        pause_game = False
 
     # Draw grid if show_grid is True
     if show_grid:
@@ -281,6 +303,12 @@ while True:
     button_font = pygame.font.SysFont('consolas', 20)
     button_text = button_font.render('Grid', True, white)
     game_window.blit(button_text, (button_rect.x + 10, button_rect.y + 5))
+
+    #  Draw the button to pause the game
+    pygame.draw.rect(game_window, blue, button_pause)
+    button_font = pygame.font.SysFont('consolas', 20)
+    button_text = button_font.render('Pause', True, white)
+    game_window.blit(button_text, (button_pause.x + 10, button_pause.y + 5))
 
     # Game Over conditions
     if snake_head[0] < 0 or snake_head[0] > frame_size_x - cell_size:
