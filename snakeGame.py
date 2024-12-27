@@ -10,11 +10,11 @@ from algos import *
 from game_state import GameState
 
 # Difficulty settings
-difficulty = 3
+difficulty = 8
 
 # Game grid size
-number_of_nodes = 16
-number_of_nodes_on_side = 4
+number_of_nodes = 100
+number_of_nodes_on_side = 10
 
 # Window size
 frame_size_x = 1000
@@ -96,7 +96,7 @@ def neighbors_to_snake_body(snake_neighbors_body):
 
 
 food_spawn_places = free_for_food()
-food_pos = (cell_size, cell_size * 3)  # random.choice(food_spawn_places)
+food_pos = random.choice(food_spawn_places)
 food_spawn = True
 
 n_snake_head = game_to_neighbors(snake_head)
@@ -104,7 +104,7 @@ n_snake_body = game_to_neighbors(snake_body)
 n_food_pos = game_to_neighbors(food_pos)
 
 game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
 path_for_following = path.get_all_head_positions()
 path_for_following.pop()
 path_for_following.reverse()
@@ -257,7 +257,7 @@ while True:
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
             game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)[1]
+            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
             path_for_following = path.get_all_head_positions()
             path_for_following.pop()
             path_for_following.reverse()

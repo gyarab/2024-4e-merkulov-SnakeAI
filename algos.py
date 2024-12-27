@@ -60,9 +60,12 @@ def heuristic(a: tuple[int, int], b: tuple[int, int]) -> int:
 
 def a_star(game_state: GameState, apple_position: tuple[int, int], n_rows: int, n_cols: int):
     open_set = []
+    # Add the first item (game_state) to the heap que with the highest priority
     heapq.heappush(open_set, PrioritizedItem(0, game_state))
 
+    # Calculate the distance from the starting node to current
     g_score = {game_state.head_position: 0}
+    # Calculate the value of distance from starting node to current plus the heuristic distance
     f_score = {game_state.head_position: heuristic(game_state.head_position, apple_position)}
 
     while open_set:
@@ -73,10 +76,12 @@ def a_star(game_state: GameState, apple_position: tuple[int, int], n_rows: int, 
 
         for neighbor in current.neighbors(n_rows, n_cols):
             tentative_g_score = g_score[current.head_position] + 1  # Each move has a cost of 1
+            neighbor.predecessor = current
 
             if neighbor.head_position not in g_score or tentative_g_score < g_score[neighbor.head_position]:
                 g_score[neighbor.head_position] = tentative_g_score
                 f_score[neighbor.head_position] = tentative_g_score + heuristic(neighbor.head_position, apple_position)
+                neighbor.predecessor = current
 
                 if neighbor not in [item.state for item in open_set]:
                     heapq.heappush(open_set, PrioritizedItem(f_score[neighbor.head_position], neighbor))
