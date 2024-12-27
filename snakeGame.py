@@ -10,15 +10,15 @@ from algos import *
 from game_state import GameState
 
 # Difficulty settings
-difficulty = 8
+difficulty = 10
 
 # Game grid size
 number_of_nodes = 100
 number_of_nodes_on_side = 10
 
 # Window size
-frame_size_x = 1000
-frame_size_y = 1000
+frame_size_x = 900
+frame_size_y = 900
 
 # Cell size (larger than before)
 cell_size = frame_size_x // number_of_nodes_on_side
@@ -187,6 +187,24 @@ def winning():
         pygame.time.delay(100)
 
 
+def no_path():
+    font = pygame.font.SysFont('comicsans', 60, True)
+    winning_surface = font.render('NO PATH POSSIBLE EXISTS', True, white)
+    winning_rect = winning_surface.get_rect()
+    winning_rect.midtop = (frame_size_x / 2, frame_size_y / 4)
+    game_window.blit(winning_surface, winning_rect)  # Adjust position as needed
+    pygame.display.update()  # Update the display to show the message
+
+    # Keep the window open until the player closes it
+    waiting = True
+    while waiting:
+        for winning_event in pygame.event.get():
+            if winning_event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.time.delay(100)
+
+
 def pause():
     # Keep the window open until the player closes it
     waiting = True
@@ -258,14 +276,18 @@ while True:
             n_food_pos = game_to_neighbors(food_pos)
             game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
             path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
-            path_for_following = path.get_all_head_positions()
-            path_for_following.pop()
-            path_for_following.reverse()
-            path_for_following = neighbors_to_snake_body(path_for_following)
-            food_pos = neighbors_to_snake_body(n_food_pos)
-            snake_body = neighbors_to_snake_body(n_snake_body)
-            snake_head = neighbors_to_snake_body(n_snake_head)
-            direction_index = 0
+            if path is None:
+                no_path()
+                print("No path kokote")
+            else:
+                path_for_following = path.get_all_head_positions()
+                path_for_following.pop()
+                path_for_following.reverse()
+                path_for_following = neighbors_to_snake_body(path_for_following)
+                food_pos = neighbors_to_snake_body(n_food_pos)
+                snake_body = neighbors_to_snake_body(n_snake_body)
+                snake_head = neighbors_to_snake_body(n_snake_head)
+                direction_index = 0
         else:
             print("No valid food spawn places available.")
 
