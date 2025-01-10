@@ -40,6 +40,31 @@ class Graph:
         for telo in range(len(snake_body) - 2, -1, -1):
             self.add_edge(snake_body[telo + 1], snake_body[telo])  # Orientovaná hrana
 
+    def initialize_smaller_graph(self):
+        # Inicializace grafu s pravidly
+        for x in range(self.vertices):
+            for y in range(self.vertices):
+                # Preskoci vrcholy v tele hada
+                if (x == (
+                        y + 1) and x % self.number_of_nodes_on_side != 0) or y == x + self.number_of_nodes_on_side or (
+                        x == (
+                        y - 1) and x % self.number_of_nodes_on_side != self.number_of_nodes_on_side - 1) or y == x - self.number_of_nodes_on_side:
+                    self.add_edge(x, y)
+                elif x % self.number_of_nodes_on_side == 0 and (
+                        y == x + self.number_of_nodes_on_side or x == (y - 1) or y == x - self.number_of_nodes_on_side):
+                    self.add_edge(x, y)
+                elif x % self.number_of_nodes_on_side == self.number_of_nodes_on_side - 1 and (
+                        y == x + self.number_of_nodes_on_side or x == (y + 1) or y == x - self.number_of_nodes_on_side):
+                    self.add_edge(x, y)
+
+    def spanning_tree(self):
+        visited = bool[self.vertices]
+        start = 0
+        dfs(self, start, visited)
+
+    def dfs(self, start, visited):
+        visited[start] = True
+
     def game_to_graph(self, snake_game_body):
         snake_graph_body = []
         if isinstance(snake_game_body, list):

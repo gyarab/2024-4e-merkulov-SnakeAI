@@ -8,13 +8,14 @@ import pygame
 
 from algos import *
 from game_state import GameState
+from graph import Graph
 
 # Difficulty settings
 difficulty = 10
 
 # Game grid size
-number_of_nodes = 100
-number_of_nodes_on_side = 10
+number_of_nodes = 36
+number_of_nodes_on_side = 6
 
 # Window size
 frame_size_x = 900
@@ -111,9 +112,11 @@ path_for_following.reverse()
 path_for_following = neighbors_to_snake_body(path_for_following)
 food_pos = neighbors_to_snake_body(n_food_pos)
 
-'''
+''''''
 # Graph initialization
-graph = Graph(number_of_nodes, cell_size, number_of_nodes_on_side)
+graph = Graph(number_of_nodes // 4, cell_size, number_of_nodes_on_side // 2)
+graph.initialize_smaller_graph()
+'''
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
 '''
