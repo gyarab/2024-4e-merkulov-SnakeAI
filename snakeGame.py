@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import copy
 import random
 import sys
 import time
@@ -14,8 +14,8 @@ from graph import Graph
 difficulty = 10
 
 # Game grid size
-number_of_nodes = 36
-number_of_nodes_on_side = 6
+number_of_nodes = 100
+number_of_nodes_on_side = 10
 
 # Window size
 frame_size_x = 900
@@ -50,7 +50,7 @@ fps_controller = pygame.time.Clock()
 # Game variables
 snake_head = (cell_size * 3, cell_size)
 snake_body = [
-    snake_head,
+    # snake_head,
     (cell_size * 3 - cell_size, cell_size),
     (cell_size * 3 - 2 * cell_size, cell_size)
 ]
@@ -116,18 +116,19 @@ food_pos = neighbors_to_snake_body(n_food_pos)
 # Graph initialization
 smaller_graph = Graph(number_of_nodes // 4, cell_size, number_of_nodes_on_side // 2)
 smaller_graph.initialize_smaller_graph()
-small_adjacency_list = smaller_graph.adjacency_list
+small_adjacency_list = copy.deepcopy(smaller_graph.adjacency_list)
 spanning_tree = smaller_graph.spanning_tree()
 nodes_for_smaller_nodes = smaller_graph.neighbor_nodes()
 graph = Graph(number_of_nodes, cell_size, number_of_nodes_on_side)
 hamiltonian_cycle = graph.hamiltonian_cycle(spanning_tree, number_of_nodes // 4, number_of_nodes_on_side // 2,
                                             nodes_for_smaller_nodes, small_adjacency_list)
+hamiltonian_cycle = graph.graph_to_game(hamiltonian_cycle)
 
 '''
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
 '''
-
+'''
 # Hamiltonian cycle path (example for a 10x10 grid)
 hamiltonian_cycle = [
     (0, 0), (0, cell_size), (0, cell_size * 2), (0, cell_size * 3),
@@ -136,15 +137,16 @@ hamiltonian_cycle = [
     (cell_size, cell_size), (cell_size * 2, cell_size), (cell_size * 3, cell_size),
     (cell_size * 3, 0), (cell_size * 2, 0), (cell_size, 0)
 ]
+'''
 ''''''
 # Initialize direction index for Hamiltonian cycle
-'''
+''''''
 for i in range(len(hamiltonian_cycle)):
     if hamiltonian_cycle[i] == snake_head:
         direction_index = i
         break
-'''
-direction_index = 0
+''''''
+#direction_index = 0
 score = 0
 
 show_grid = True  # Flag to toggle grid
@@ -248,7 +250,7 @@ while True:
         print("Congratulations! You've completed the game!")
         running = False
         winning()  # End the game loop
-    '''
+    ''''''
     # Move the snake along the Hamiltonian cycle
     if direction_index < len(hamiltonian_cycle):
         snake_head = hamiltonian_cycle[direction_index]
@@ -258,12 +260,12 @@ while True:
         direction_index = 0
         snake_head = hamiltonian_cycle[direction_index]
         direction_index += 1
+    ''''''
     '''
-
     if direction_index < len(path_for_following):
         snake_head = path_for_following[direction_index]
         direction_index += 1
-
+    '''
     # Snake body growing mechanism
     snake_body.insert(0, snake_head)
     if snake_head == food_pos:
@@ -271,7 +273,7 @@ while True:
         food_spawn = False
         food_spawn_places = free_for_food()
     else:
-        if len(snake_body) > 3:
+        if len(snake_body) >= 3:
             snake_body.pop()
 
     # Spawning food on the screen
@@ -281,6 +283,7 @@ while True:
         if food_spawn_places:
             food_pos = random.choice(food_spawn_places)
             food_spawn = True
+            '''
             n_snake_head = game_to_neighbors(snake_head)
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
@@ -298,6 +301,7 @@ while True:
                 snake_body = neighbors_to_snake_body(n_snake_body)
                 snake_head = neighbors_to_snake_body(n_snake_head)
                 direction_index = 0
+            '''
         else:
             print("No valid food spawn places available.")
 

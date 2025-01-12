@@ -1,3 +1,5 @@
+import random
+
 class Graph:
     def __init__(self, vertices, cell_size, number_of_nodes_on_side):
         # Inicializace seznamu sousedů
@@ -64,7 +66,12 @@ class Graph:
         # Perform DFS starting from vertex 0
         def dfs(v):
             visited[v] = True
-            for neighbor in self.adjacency_list[v]:
+            neighbors = self.adjacency_list[v]  # Get all neighbors of vertex v
+
+            while neighbors:
+                # Choose a random neighbor
+                neighbor = random.choice(neighbors)
+                neighbors.remove(neighbor)  # Remove the neighbor from the list
                 if not visited[neighbor]:
                     # Add the edge to the spanning tree
                     spanning_tree_edges.append((v, neighbor))
@@ -177,7 +184,6 @@ class Graph:
         self.add_edge(left_down, right_down)
 
     def connect_vertical_edges(self, node, neighbor, nodes_for_smaller_nodes):
-        """Helper function to connect vertical edges."""
         left_down = nodes_for_smaller_nodes[node]["left_down"]
         right_down = nodes_for_smaller_nodes[node]["right_down"]
         left_up = nodes_for_smaller_nodes[neighbor]["left_up"]
@@ -188,10 +194,10 @@ class Graph:
         self.add_edge(right_down, right_up)
 
     def connect_horizontal_edges_not_tree(self, node, neighbor, nodes_for_smaller_nodes):
-        left_up = nodes_for_smaller_nodes[node]["left_up"]
-        left_down = nodes_for_smaller_nodes[node]["left_down"]
-        right_up = nodes_for_smaller_nodes[neighbor]["right_up"]
-        right_down = nodes_for_smaller_nodes[neighbor]["right_down"]
+        right_up = nodes_for_smaller_nodes[node]["right_up"]
+        right_down = nodes_for_smaller_nodes[node]["right_down"]
+        left_up = nodes_for_smaller_nodes[neighbor]["left_up"]
+        left_down = nodes_for_smaller_nodes[neighbor]["left_down"]
         self.add_edge(left_up, left_down)
         self.add_edge(left_down, left_up)
         self.add_edge(right_up, right_down)
