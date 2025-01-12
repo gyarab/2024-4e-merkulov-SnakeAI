@@ -58,12 +58,27 @@ class Graph:
                     self.add_edge(x, y)
 
     def spanning_tree(self):
-        visited = bool[self.vertices]
-        start = 0
-        dfs(self, start, visited)
+        visited = [False] * self.vertices  # Track visited vertices
+        spanning_tree_edges = []  # Store the edges of the spanning tree
 
-    def dfs(self, start, visited):
-        visited[start] = True
+        # Perform DFS starting from vertex 0
+        def dfs(v):
+            visited[v] = True
+            for neighbor in self.adjacency_list[v]:
+                if not visited[neighbor]:
+                    # Add the edge to the spanning tree
+                    spanning_tree_edges.append((v, neighbor))
+                    dfs(neighbor)
+
+        dfs(0)  # Start DFS from vertex 0
+
+        # Clear the adjacency list and add only spanning tree edges
+        self.adjacency_list = [[] for _ in range(self.vertices)]
+        for u, v in spanning_tree_edges:
+            self.add_edge(u, v)
+            self.add_edge(v, u)  # Add edge to adjacency list
+
+        return spanning_tree_edges
 
     def game_to_graph(self, snake_game_body):
         snake_graph_body = []

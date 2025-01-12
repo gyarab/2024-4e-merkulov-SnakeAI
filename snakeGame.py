@@ -116,6 +116,7 @@ food_pos = neighbors_to_snake_body(n_food_pos)
 # Graph initialization
 graph = Graph(number_of_nodes // 4, cell_size, number_of_nodes_on_side // 2)
 graph.initialize_smaller_graph()
+spanning_tree = graph.spanning_tree()
 '''
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
