@@ -116,10 +116,12 @@ food_pos = neighbors_to_snake_body(n_food_pos)
 # Graph initialization
 smaller_graph = Graph(number_of_nodes // 4, cell_size, number_of_nodes_on_side // 2)
 smaller_graph.initialize_smaller_graph()
+small_adjacency_list = smaller_graph.adjacency_list
 spanning_tree = smaller_graph.spanning_tree()
-nodes_for_smaller_nodes = smaller_graph.neighbour_nodes()
+nodes_for_smaller_nodes = smaller_graph.neighbor_nodes()
 graph = Graph(number_of_nodes, cell_size, number_of_nodes_on_side)
-graph.hamiltonian_cycle(spanning_tree, number_of_nodes // 4)
+hamiltonian_cycle = graph.hamiltonian_cycle(spanning_tree, number_of_nodes // 4, number_of_nodes_on_side // 2,
+                                            nodes_for_smaller_nodes, small_adjacency_list)
 
 '''
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)

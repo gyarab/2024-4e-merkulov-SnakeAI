@@ -73,21 +73,20 @@ class Graph:
         dfs(0)  # Start DFS from vertex 0
 
         # Clear the adjacency list and add only spanning tree edges
-        '''self.adjacency_list = [[] for _ in range(self.vertices)]
+        self.adjacency_list = [[] for _ in range(self.vertices)]
         for u, v in spanning_tree_edges:
             self.add_edge(u, v)
             self.add_edge(v, u)  # Add edge to adjacency list
-'''
+        return self.adjacency_list
 
-        return spanning_tree_edges
-
-    # Writes 4 nodes that are neighbours for 1 node in smaller graph to dictionary
-    def neighbour_nodes(self):
+    # Writes 4 nodes that are neighbors for 1 node in smaller graph to dictionary
+    def neighbor_nodes(self):
         nodes_for_smaller_nodes = {}
         for x in range(self.vertices):
-            left_up = ((x // self.vertices) * 2 * self.vertices) + ((x % self.vertices) * 2)
+            left_up = ((x // self.number_of_nodes_on_side) * 4 * self.number_of_nodes_on_side) + (
+                    (x % self.number_of_nodes_on_side) * 2)
             right_up = left_up + 1
-            left_down = left_up + (self.vertices * 2)
+            left_down = left_up + (self.number_of_nodes_on_side * 2)
             right_down = left_down + 1
             # Uložení do slovníku s klíčem x
             nodes_for_smaller_nodes[x] = {
@@ -98,8 +97,115 @@ class Graph:
             }
         return nodes_for_smaller_nodes
 
-    def hamiltonian_cycle(self, spanning_tree_edges, nodes):
-        visited = [False] * self.vertices
+    def dfs_hamilton(self, vertex, hamiltonian_cycle, visited):
+        # Base case: if the Hamiltonian cycle includes all vertices, return the cycle
+        if len(hamiltonian_cycle) == self.vertices:
+            return hamiltonian_cycle
+
+        # Mark the current vertex as visited
+        visited[vertex] = True
+
+        # Explore neighbors
+        for neighbor in self.adjacency_list[vertex]:
+            if not visited[neighbor]:
+                hamiltonian_cycle.append(neighbor)
+                result = self.dfs_hamilton(neighbor, hamiltonian_cycle, visited)
+                if result:  # If a valid cycle is found, return it
+                    return result
+                hamiltonian_cycle.pop()  # Backtrack
+
+        # Backtrack: unmark the current vertex
+        visited[vertex] = False
+        return None  # Return None if no cycle is found
+
+    def hamiltonian_cycle(self, spanning_tree, nodes, nodes_on_side, nodes_for_smaller_nodes, small_adjacency_list):
+        visited = [False] * nodes
+        visited_big_graph = [False] * self.vertices
+        hamiltonian_cycle = [0]  # Start the cycle from vertex 0
+
+        # Build the graph based on the grid structure
+        for node in range(nodes):
+            left_up = nodes_for_smaller_nodes[node]["left_up"]
+            right_up = nodes_for_smaller_nodes[node]["right_up"]
+            left_down = nodes_for_smaller_nodes[node]["left_down"]
+            right_down = nodes_for_smaller_nodes[node]["right_down"]
+
+            # Add edges based on position in the grid
+            if node // nodes_on_side == 0:  # Top row
+                self.add_edge(left_up, right_up)
+                self.add_edge(right_up, left_up)
+            if node // nodes_on_side == nodes_on_side - 1:  # Bottom row
+                self.add_edge(left_down, right_down)
+                self.add_edge(right_down, left_down)
+            if node % nodes_on_side == 0:  # Leftmost column
+                self.add_edge(left_down, left_up)
+                self.add_edge(left_up, left_down)
+            if node % nodes_on_side == nodes_on_side - 1:  # Rightmost column
+                self.add_edge(right_down, right_up)
+                self.add_edge(right_up, right_down)
+
+        # Connect nodes based on the spanning tree and adjacency list
+        for node in range(nodes):
+            visited[node] = True
+            for neighbor in small_adjacency_list[node]:
+                if not visited[neighbor]:
+                    if neighbor in spanning_tree[node]:  # If the neighbor is part of the spanning tree
+                        # Connect edges within the spanning tree
+                        if neighbor - node == 1:  # Right neighbor
+                            self.connect_horizontal_edges(node, neighbor, nodes_for_smaller_nodes)
+                        else:  # Bottom neighbor
+                            self.connect_vertical_edges(node, neighbor, nodes_for_smaller_nodes)
+                    else:  # If the neighbor is not part of the spanning tree
+                        if neighbor - node == 1:  # Right neighbor
+                            self.connect_horizontal_edges_not_tree(node, neighbor, nodes_for_smaller_nodes)
+                        else:  # Bottom neighbor
+                            self.connect_vertical_edges_not_tree(node, neighbor, nodes_for_smaller_nodes)
+
+        # Find the Hamiltonian cycle using DFS
+        result = self.dfs_hamilton(0, hamiltonian_cycle, visited_big_graph)
+        return result if result else []
+
+    def connect_horizontal_edges(self, node, neighbor, nodes_for_smaller_nodes):
+        """Helper function to connect horizontal edges."""
+        right_up = nodes_for_smaller_nodes[node]["right_up"]
+        right_down = nodes_for_smaller_nodes[node]["right_down"]
+        left_up = nodes_for_smaller_nodes[neighbor]["left_up"]
+        left_down = nodes_for_smaller_nodes[neighbor]["left_down"]
+        self.add_edge(right_up, left_up)
+        self.add_edge(left_up, right_up)
+        self.add_edge(right_down, left_down)
+        self.add_edge(left_down, right_down)
+
+    def connect_vertical_edges(self, node, neighbor, nodes_for_smaller_nodes):
+        """Helper function to connect vertical edges."""
+        left_down = nodes_for_smaller_nodes[node]["left_down"]
+        right_down = nodes_for_smaller_nodes[node]["right_down"]
+        left_up = nodes_for_smaller_nodes[neighbor]["left_up"]
+        right_up = nodes_for_smaller_nodes[neighbor]["right_up"]
+        self.add_edge(left_up, left_down)
+        self.add_edge(left_down, left_up)
+        self.add_edge(right_up, right_down)
+        self.add_edge(right_down, right_up)
+
+    def connect_horizontal_edges_not_tree(self, node, neighbor, nodes_for_smaller_nodes):
+        left_up = nodes_for_smaller_nodes[node]["left_up"]
+        left_down = nodes_for_smaller_nodes[node]["left_down"]
+        right_up = nodes_for_smaller_nodes[neighbor]["right_up"]
+        right_down = nodes_for_smaller_nodes[neighbor]["right_down"]
+        self.add_edge(left_up, left_down)
+        self.add_edge(left_down, left_up)
+        self.add_edge(right_up, right_down)
+        self.add_edge(right_down, right_up)
+
+    def connect_vertical_edges_not_tree(self, node, neighbor, nodes_for_smaller_nodes):
+        left_down = nodes_for_smaller_nodes[node]["left_down"]
+        right_down = nodes_for_smaller_nodes[node]["right_down"]
+        left_up = nodes_for_smaller_nodes[neighbor]["left_up"]
+        right_up = nodes_for_smaller_nodes[neighbor]["right_up"]
+        self.add_edge(left_up, right_up)
+        self.add_edge(right_up, left_up)
+        self.add_edge(left_down, right_down)
+        self.add_edge(right_down, left_down)
 
     def game_to_graph(self, snake_game_body):
         snake_graph_body = []
