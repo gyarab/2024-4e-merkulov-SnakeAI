@@ -73,12 +73,33 @@ class Graph:
         dfs(0)  # Start DFS from vertex 0
 
         # Clear the adjacency list and add only spanning tree edges
-        self.adjacency_list = [[] for _ in range(self.vertices)]
+        '''self.adjacency_list = [[] for _ in range(self.vertices)]
         for u, v in spanning_tree_edges:
             self.add_edge(u, v)
             self.add_edge(v, u)  # Add edge to adjacency list
+'''
 
         return spanning_tree_edges
+
+    # Writes 4 nodes that are neighbours for 1 node in smaller graph to dictionary
+    def neighbour_nodes(self):
+        nodes_for_smaller_nodes = {}
+        for x in range(self.vertices):
+            left_up = ((x // self.vertices) * 2 * self.vertices) + ((x % self.vertices) * 2)
+            right_up = left_up + 1
+            left_down = left_up + (self.vertices * 2)
+            right_down = left_down + 1
+            # Uložení do slovníku s klíčem x
+            nodes_for_smaller_nodes[x] = {
+                "left_up": left_up,
+                "right_up": right_up,
+                "left_down": left_down,
+                "right_down": right_down
+            }
+        return nodes_for_smaller_nodes
+
+    def hamiltonian_cycle(self, spanning_tree_edges, nodes):
+        visited = [False] * self.vertices
 
     def game_to_graph(self, snake_game_body):
         snake_graph_body = []
