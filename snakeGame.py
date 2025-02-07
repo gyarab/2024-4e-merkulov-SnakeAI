@@ -94,8 +94,21 @@ def neighbors_to_snake_body(snake_neighbors_body):
         return snake_body_game
 
 
-food_spawn_places = free_for_food()
-food_pos = random.choice(food_spawn_places)
+def game_to_graph(snake_game_body):
+    snake_graph_body = []
+    if isinstance(snake_game_body, list):
+        for x, y in snake_game_body:
+            snake_graph_body.append(x * number_of_nodes_on_side + y)
+        return snake_graph_body
+    else:
+        x, y = snake_game_body
+        snake_graph_body.append(x * number_of_nodes_on_side + y)
+        return snake_graph_body
+
+
+# food_spawn_places = free_for_food()
+# food_pos = random.choice(food_spawn_places)
+food_pos = (cell_size * 4, cell_size * 4)
 food_spawn = True
 
 n_snake_head = game_to_neighbors(snake_head)
@@ -104,9 +117,14 @@ n_food_pos = game_to_neighbors(food_pos)
 
 game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
 path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
+final_tail_position = path.snake_positions[-1] if path.snake_positions else None
 path_for_following = path.get_all_head_positions()
 path_for_following.pop()
+final_head_position = path_for_following[0]
+final_tail = game_to_graph(final_tail_position)
+final_head = game_to_graph(final_head_position)
 path_for_following.reverse()
+
 path_for_following = neighbors_to_snake_body(path_for_following)
 food_pos = neighbors_to_snake_body(n_food_pos)
 
@@ -152,6 +170,25 @@ hamiltonian_cycle = [
 ]
 hamiltonian_cylcle_order = [0, 1, 2, 3, 4, 5, 35, 34, 33, 32, 31, 6, 18, 19, 20, 21, 30, 7, 17, 24, 23, 22, 29, 8, 16,
                             25, 26, 27, 28, 9, 15, 14, 13, 12, 11, 10]
+# Can we make shortcut
+tail = hamiltonian_cylcle_order[final_tail]
+head = hamiltonian_cylcle_order[final_head]
+if tail > head:
+    if tail - head > 1:
+        pass
+        # Follow shortest path
+    else:
+        pass
+        # Follow cycle
+else:
+    if number_of_nodes - head + tail - 1 > 1:
+        pass
+        # Follow shortest path
+    else:
+        pass
+        # Follow cycle
+
+
 
 # Initialize direction index for Hamiltonian cycle
 ''''''
