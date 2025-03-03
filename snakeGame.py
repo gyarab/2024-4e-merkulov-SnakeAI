@@ -11,7 +11,7 @@ from game_state import GameState
 from graph import Graph
 
 # Difficulty settings
-difficulty = 10
+difficulty = 20
 
 # Game grid size
 number_of_nodes = 100
@@ -113,12 +113,13 @@ def game_to_graph(snake_game_body):
 food_pos = (cell_size * 4, cell_size * 4)
 food_spawn = True
 
+hamiltonian_cylcle_order = [0] * number_of_nodes
 n_snake_head = game_to_neighbors(snake_head)
 n_snake_body = game_to_neighbors(snake_body)
 n_food_pos = game_to_neighbors(food_pos)
 
 game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
+path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side, hamiltonian_cylcle_order)
 final_tail_position = path.snake_positions[-1] if path.snake_positions else None
 path_for_following = path.get_all_head_positions()
 path_for_following.pop()
@@ -131,6 +132,7 @@ path_for_following = neighbors_to_snake_body(path_for_following)
 food_pos = neighbors_to_snake_body(n_food_pos)
 
 follow_hamiltonian_cycle = False
+
 ''''''
 # Graph initialization
 smaller_graph = Graph(number_of_nodes // 4, cell_size, number_of_nodes_on_side // 2)
@@ -149,11 +151,11 @@ for node in hamiltonian_cycle:
     order += 1
 
 hamiltonian_cycle = graph.graph_to_game(hamiltonian_cycle)
-'''
+''''''
 '''
 number_of_snake_body_nodes = graph.game_to_graph(snake_body)
 graph.initialize_graph(number_of_snake_body_nodes)
-''''''
+'''
 '''
 # Hamiltonian cycle path (example for a 10x10 grid)
 hamiltonian_cycle = [
@@ -325,7 +327,8 @@ while True:
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
             game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side)
+            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side,
+                          hamiltonian_cylcle_order)
             if path is None:
                 no_path()
                 print("No path kokote")
@@ -339,20 +342,19 @@ while True:
                 path_for_following.reverse()
                 tail = hamiltonian_cylcle_order[final_tail]
                 head = hamiltonian_cylcle_order[final_head]
+                '''
+                path_for_following = neighbors_to_snake_body(path_for_following)
+                food_pos = neighbors_to_snake_body(n_food_pos)
+                snake_body = neighbors_to_snake_body(n_snake_body)
+                snake_head = neighbors_to_snake_body(n_snake_head)
+                direction_index = 0
+                '''
+                ''''''
                 if tail > head:
                     if tail - head > len(snake_body) + 1:
                         follow_hamiltonian_cycle = False
                         direction_index = 0
                         path_to_check = game_to_graph(path_for_following)
-                        for node in range(1, len(path_to_check)):
-                            if hamiltonian_cylcle_order[path_to_check[node]] < hamiltonian_cylcle_order[
-                                path_to_check[node - 1]]:
-                                follow_hamiltonian_cycle = True
-                                for i in range(len(hamiltonian_cycle)):
-                                    if hamiltonian_cycle[i] == snake_head:
-                                        direction_index = i + 1
-                                        break
-                                break
                         path_for_following = neighbors_to_snake_body(path_for_following)
                         food_pos = neighbors_to_snake_body(n_food_pos)
                         snake_body = neighbors_to_snake_body(n_snake_body)
@@ -368,15 +370,6 @@ while True:
                         follow_hamiltonian_cycle = False
                         direction_index = 0
                         path_to_check = game_to_graph(path_for_following)
-                        for node in range(1, len(path_to_check)):
-                            if hamiltonian_cylcle_order[path_to_check[node]] < hamiltonian_cylcle_order[
-                                path_to_check[node - 1]]:
-                                follow_hamiltonian_cycle = True
-                                for i in range(len(hamiltonian_cycle)):
-                                    if hamiltonian_cycle[i] == snake_head:
-                                        direction_index = i + 1
-                                        break
-                                break
                         path_for_following = neighbors_to_snake_body(path_for_following)
                         food_pos = neighbors_to_snake_body(n_food_pos)
                         snake_body = neighbors_to_snake_body(n_snake_body)
@@ -387,6 +380,7 @@ while True:
                             if hamiltonian_cycle[i] == snake_head:
                                 direction_index = i + 1
                                 break
+                                ''''''
         else:
             print("No valid food spawn places available.")
 
