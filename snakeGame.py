@@ -398,16 +398,85 @@ while True:
         for y in range(50, frame_size_y + 50, cell_size):
             pygame.draw.line(game_window, gray, (0, y), (frame_size_x, y))
 
-    # Draw the snake body with black border
-    for pos in snake_body:
+    # Draw the snake body with a black border
+    for pos in range(len(snake_body)):
+        x, y = snake_body[pos]
+        y += 50  # Adjust for window offset
+
         # Draw the black border (slightly larger rectangle)
-        pygame.draw.rect(game_window, black, pygame.Rect(pos[0], pos[1] + 50, cell_size, cell_size))
-        # Draw the green snake body and blue snake head inside the black border
-        if pos == snake_head:
-            pygame.draw.rect(game_window, blue,
-                             pygame.Rect(snake_head[0] + 2, snake_head[1] + 52, cell_size - 4, cell_size - 4))
+        # pygame.draw.rect(game_window, black, pygame.Rect(x, y, cell_size, cell_size))
+
+        # Draw the snake head with 4 different orientations
+        if pos == 0:
+            next_x, next_y = snake_body[1] if len(snake_body) > 1 else (None, None)
+            next_y = next_y + 50 if next_y is not None else None
+
+            if next_x == x and next_y > y:  # Moving up
+                pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y + 3, cell_size - 6, cell_size - 3))
+            elif next_x == x and next_y < y:  # Moving down
+                pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y, cell_size - 6, cell_size - 3))
+            elif next_x > x and next_y == y:  # Moving left
+                pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y + 3, cell_size - 3, cell_size - 6))
+            elif next_x < x and next_y == y:  # Moving right
+                pygame.draw.rect(game_window, blue, pygame.Rect(x, y + 3, cell_size - 3, cell_size - 6))
         else:
-            pygame.draw.rect(game_window, green, pygame.Rect(pos[0] + 2, pos[1] + 52, cell_size - 4, cell_size - 4))
+
+            # Body segment logic
+            prev_x, prev_y = snake_body[pos - 1]
+            next_x, next_y = snake_body[pos + 1] if pos + 1 < len(snake_body) else (None, None)
+            prev_y += 50
+            next_y = next_y + 50 if next_y is not None else None
+
+            if next_x is not None:
+                # Vertical segment
+                if prev_x == x == next_x:
+                    pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y, cell_size - 6, cell_size))
+                # Horizontal segment
+                elif prev_y == y == next_y:
+                    pygame.draw.rect(game_window, green, pygame.Rect(x, y + 3, cell_size, cell_size - 6))
+                # Corner parts
+                else:
+                    # Bottom-left corner when prev is above
+                    if prev_x == x and prev_y < y and next_x > x and next_y == y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x + cell_size - 3, y, 3, 3))
+                    # Bottom-right corner when prev is above
+                    elif prev_x == x and prev_y < y and next_x < x and next_y == y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x, y, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x, y, 3, 3))
+                    # Top-left corner when prev is below
+                    elif prev_x == x and prev_y > y and next_x > x and next_y == y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y + 3, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x + cell_size - 3, y + cell_size - 3, 3, 3))
+                    # Top-right corner when prev is below
+                    elif prev_x == x and prev_y > y and next_x < x and next_y == y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x, y + 3, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x, y + cell_size - 3, 3, 3))
+                    # Left-bottom corner when prev is on right
+                    elif prev_x > x and prev_y == y and next_x == x and next_y < y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x + cell_size - 3, y, 3, 3))
+                    # Right-bottom corner when prev is on left
+                    elif prev_x < x and prev_y == y and next_x == x and next_y < y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x, y, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x, y, 3, 3))
+                    # Left-top corner when prev is on right
+                    elif prev_x > x and prev_y == y and next_x == x and next_y > y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y + 3, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x + cell_size - 3, y + cell_size - 3, 3, 3))
+                    # Right-top corner when prev is on left
+                    elif prev_x < x and prev_y == y and next_x == x and next_y > y:
+                        pygame.draw.rect(game_window, green, pygame.Rect(x, y + 3, cell_size - 3, cell_size - 3))
+                        pygame.draw.rect(game_window, black, pygame.Rect(x, y + cell_size - 3, 3, 3))
+        if pos == len(snake_body) - 1:
+            if prev_x == x and prev_y < y:  # Moving up
+                pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y, cell_size - 6, cell_size - 3))
+            elif prev_x == x and prev_y > y:  # Moving down
+                pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y + 3, cell_size - 6, cell_size - 3))
+            elif prev_x < x and prev_y == y:  # Moving left
+                pygame.draw.rect(game_window, green, pygame.Rect(x, y + 3, cell_size - 3, cell_size - 6))
+            elif prev_x > x and prev_y == y:  # Moving right
+                pygame.draw.rect(game_window, green, pygame.Rect(x + 3, y + 3, cell_size - 3, cell_size - 6))
 
     # Draw the food
     pygame.draw.circle(game_window, red, (food_pos[0] + cell_size // 2, food_pos[1] + 50 + cell_size // 2),
