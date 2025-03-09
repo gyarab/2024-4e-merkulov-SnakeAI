@@ -190,7 +190,7 @@ direction_index = 0
 score = 0
 moves = 0
 
-show_grid = True  # Flag to toggle grid
+show_grid = False  # Flag to toggle grid
 pause_game = False
 # Button to toggle grid visibility (now in top-right corner)
 button_rect = pygame.Rect(frame_size_x - 90, 10, 80, 30)  # Button moved to top-right corner
@@ -360,7 +360,7 @@ while True:
                           hamiltonian_cylcle_order)
             if path is None:
                 print("No path kokote")
-                print("Previous path: " + str(game_to_graph(prev_path)))
+                print("Previous path: " + str(game_to_neighbors(prev_path)))
                 print("snake head: " + str(n_snake_head))
                 print("snake body: " + str(n_snake_body))
                 print("food position: " + str(n_food_pos))
@@ -446,13 +446,37 @@ while True:
             next_x, next_y = snake_body[1] if len(snake_body) > 1 else (None, None)
             next_y = next_y + 50 if next_y is not None else None
 
-            if next_x == x and next_y > y:  # Moving up
+            # Moving up
+            if next_x == x and next_y > y:
+                '''
+                snake_head_up_img = pygame.image.load("images/snake_head_up.png")
+                snake_head_up_img = pygame.transform.scale(snake_head_up_img, (cell_size - 6, cell_size - 3))
+                game_window.blit(snake_head_up_img, (x + 3, y + 3))
+                '''
                 pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y + 3, cell_size - 6, cell_size - 3))
-            elif next_x == x and next_y < y:  # Moving down
+            # Moving down
+            elif next_x == x and next_y < y:
+                '''
+                snake_head_down_img = pygame.image.load("images/snake_head_down.png")
+                snake_head_down_img = pygame.transform.scale(snake_head_down_img, (cell_size - 6, cell_size - 3))
+                game_window.blit(snake_head_down_img, (x + 3, y))
+                '''
                 pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y, cell_size - 6, cell_size - 3))
-            elif next_x > x and next_y == y:  # Moving left
+            # Moving left
+            elif next_x > x and next_y == y:
+                '''
+                snake_head_left_img = pygame.image.load("images/snake_head_left.png")
+                snake_head_left_img = pygame.transform.scale(snake_head_left_img, (cell_size - 3, cell_size - 6))
+                game_window.blit(snake_head_left_img, (x + 3, y + 3))
+                '''
                 pygame.draw.rect(game_window, blue, pygame.Rect(x + 3, y + 3, cell_size - 3, cell_size - 6))
-            elif next_x < x and next_y == y:  # Moving right
+            # Moving right
+            elif next_x < x and next_y == y:
+                '''
+                snake_head_right_img = pygame.image.load("images/snake_head_right.png")
+                snake_head_right_img = pygame.transform.scale(snake_head_right_img, (cell_size - 3, cell_size - 6))
+                game_window.blit(snake_head_right_img, (x, y + 3))
+                '''
                 pygame.draw.rect(game_window, blue, pygame.Rect(x, y + 3, cell_size - 3, cell_size - 6))
         else:
 
