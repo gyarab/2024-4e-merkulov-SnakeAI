@@ -10,9 +10,11 @@ from algos import *
 from game_state import GameState
 from graph import Graph
 
+# Text variables
+font = 'comicsans'
 # Difficulty settings
-difficulty = 20
-
+difficulty = 10
+prev_path = 0
 # Game grid size
 number_of_nodes = 100
 number_of_nodes_on_side = 10
@@ -54,7 +56,7 @@ snake_body = [
     (cell_size * 3 - cell_size, cell_size),
     (cell_size * 3 - 2 * cell_size, cell_size)
 ]
-
+start_time = time.time()
 
 def free_for_food():
     available_food_spawn_places = []
@@ -186,6 +188,7 @@ for i in range(len(hamiltonian_cycle)):
 '''
 direction_index = 0
 score = 0
+moves = 0
 
 show_grid = True  # Flag to toggle grid
 pause_game = False
@@ -216,6 +219,15 @@ def show_score(choice, color, font, size):
     score_rect = score_surface.get_rect()
     if choice == 1:
         score_rect.midtop = (50, 10)  # Score moved to top-left corner
+    game_window.blit(score_surface, score_rect)
+
+
+def show_moves(choice, color, font, size):
+    score_font = pygame.font.SysFont(font, size)
+    score_surface = score_font.render('Moves made : ' + str(moves), True, color)
+    score_rect = score_surface.get_rect()
+    if choice == 1:
+        score_rect.midtop = (300, 10)  # Score moved to top-left corner
     game_window.blit(score_surface, score_rect)
 
 
@@ -264,9 +276,21 @@ def pause():
                 pygame.quit()
                 sys.exit()
             elif pausing_event.type == pygame.MOUSEBUTTONDOWN:
-                if button_rect.collidepoint(pausing_event.pos):
+                if button_pause.collidepoint(pausing_event.pos):
                     waiting = False
-        pygame.clock.tick(15)
+
+
+def show_stopwatch():
+    elapsed_time = time.time() - start_time
+    minutes = int(elapsed_time // 60)
+    seconds = int(elapsed_time % 60)
+    stopwatch_text = f'{minutes:02}:{seconds:02}'
+
+    font = pygame.font.SysFont('comicsans', 30)
+    stopwatch_surface = font.render('Time: ' + stopwatch_text, True, white)
+    stopwatch_rect = stopwatch_surface.get_rect()
+    stopwatch_rect.topright = (frame_size_x - 200, 10)  # Top-right corner
+    game_window.blit(stopwatch_surface, stopwatch_rect)
 
 
 # Main logic
@@ -279,10 +303,12 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if button_rect.collidepoint(event.pos):
                 show_grid = not show_grid
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if button_rect.collidepoint(event.pos):
+            elif button_pause.collidepoint(event.pos):
                 pause_game = not pause_game
 
+    if pause_game:
+        pause()
+        pause_game = False
     # Check if the snake has reached the winning length
     if len(snake_body) >= number_of_nodes - 1:
         print("Congratulations! You've completed the game!")
@@ -294,17 +320,20 @@ while True:
         if direction_index < len(hamiltonian_cycle):
             snake_head = hamiltonian_cycle[direction_index]
             direction_index += 1
+            moves += 1
         else:
             # If the snake has completed the cycle, reset to the beginning
             direction_index = 0
             snake_head = hamiltonian_cycle[direction_index]
             direction_index += 1
+            moves += 1
     else:
         ''''''
         ''''''
         if direction_index < len(path_for_following):
             snake_head = path_for_following[direction_index]
             direction_index += 1
+            moves += 1
         ''''''
     # Snake body growing mechanism
     snake_body.insert(0, snake_head)
@@ -330,8 +359,16 @@ while True:
             path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side,
                           hamiltonian_cylcle_order)
             if path is None:
-                no_path()
                 print("No path kokote")
+                print("Previous path: " + str(game_to_graph(prev_path)))
+                print("snake head: " + str(n_snake_head))
+                print("snake body: " + str(n_snake_body))
+                print("food position: " + str(n_food_pos))
+                path_for_following_debug = path.get_all_head_positions()
+                path_for_following_debug = path_for_following_debug.pop()
+                print("path: " + str(path_for_following_debug))
+
+                no_path()
             else:
                 final_tail_position = path.snake_positions[-1] if path.snake_positions else None
                 path_for_following = path.get_all_head_positions()
@@ -384,12 +421,10 @@ while True:
         else:
             print("No valid food spawn places available.")
 
+    prev_path = path_for_following
+
     # Fill the game window
     game_window.fill(black)
-
-    if pause_game:
-        pause()
-        pause_game = False
 
     # Draw grid if show_grid is True
     if show_grid:
@@ -484,13 +519,13 @@ while True:
 
     # Draw the button to toggle grid
     pygame.draw.rect(game_window, blue, button_rect)
-    button_font = pygame.font.SysFont('consolas', 20)
+    button_font = pygame.font.SysFont(font, 30)
     button_text = button_font.render('Grid', True, white)
     game_window.blit(button_text, (button_rect.x + 10, button_rect.y + 5))
 
     #  Draw the button to pause the game
     pygame.draw.rect(game_window, blue, button_pause)
-    button_font = pygame.font.SysFont('consolas', 20)
+    button_font = pygame.font.SysFont(font, 30)
     button_text = button_font.render('Pause', True, white)
     game_window.blit(button_text, (button_pause.x + 10, button_pause.y + 5))
 
@@ -507,7 +542,13 @@ while True:
     pygame.draw.line(game_window, white, (0, 50), (frame_size_x, 50), 2)  # Separation line
 
     # Show score
-    show_score(1, white, 'consolas', 15)
+    show_score(1, white, font, 30)
+
+    # Show number of moves
+    show_moves(1, white, font, 30)
+
+    # Show time
+    show_stopwatch()
 
     # Refresh game screen
     pygame.display.update()
