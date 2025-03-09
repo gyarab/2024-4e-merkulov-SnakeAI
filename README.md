@@ -54,7 +54,7 @@ Klonujte tento repozitář do vašeho počítače a přejděte do složky projek
 
 ```bash
 git clone https://github.com/gyarab/2024-4e-merkulov-SnakeAI.git
-cd Snake_AI
+cd 2024-4e-merkulov-SnakeAI
 ```
 
 ### 2️⃣ Vytvoření virtuálního prostředí
