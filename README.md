@@ -1,5 +1,20 @@
 # 🐍 SNAKE AI
 
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg"
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg"
+  />
+  <img
+    alt="github contribution grid snake animation"
+    src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake.svg"
+  />
+</picture>
+
 ## 🎯 Cíl projektu
 
 Cílem tohoto projektu je vytvořit **AI hada**, který **sám dokončí hru** tím, že zaplní celé hrací pole, aniž
@@ -21,4 +36,4 @@ ploše. AI bude průběžně vyhodnocovat situaci a volit nejlepší strategii.
 
 - **Krajta** 🐍
 - **Pygame** 🎮
-- **Algoritmy pro hledání cest** 📍  
+- **Algoritmy pro hledání cest** 📍
