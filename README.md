@@ -37,3 +37,64 @@ ploše. AI bude průběžně vyhodnocovat situaci a volit nejlepší strategii.
 - **Krajta** 🐍
 - **Pygame** 🎮
 - **Algoritmy pro hledání cest** 📍
+
+## 🚀 Jak spustit projekt na svém počítači
+
+Tento návod vám ukáže, jak si tento projekt snadno spustíte na vašem počítači. Stačí postupovat podle následujících
+kroků.
+
+### 🛠️ Požadavky
+
+Nejdříve si ověřte, že máte nainstalovaný **Python 3.7+**. Pokud ne, stáhněte si ho z oficiálních
+stránek: [Stáhnout Python](https://www.python.org/downloads/).
+
+### 1️⃣ Klonování repozitáře
+
+Klonujte tento repozitář do vašeho počítače a přejděte do složky projektu:
+
+```bash
+git clone https://github.com/gyarab/2024-4e-merkulov-SnakeAI.git
+cd Snake_AI
+```
+
+### 2️⃣ Vytvoření virtuálního prostředí
+
+Vytvořte a aktivujte virtuální prostředí. To vám umožní izolovat závislosti pro tento projekt:
+
+**Na Linuxu nebo macOS:**
+
+```shell
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Na Windows:**
+
+```shell
+python3 -m venv .venv
+source .venv\Scripts\activate
+```
+
+### 3️⃣ Instalace knihoven
+
+Po aktivaci virtuálního prostředí nainstalujte všechny potřebné knihovny pomocí:
+
+```shell
+pip install -r requirements.txt
+```
+
+### 4️⃣ Spuštění hry
+
+Jakmile máte všechny potřebné knihovny nainstalované, můžete hru spustit jednoduše tímto příkazem:
+
+**Na Linux nebo macOS**
+
+```shell
+python3 snake_game.py
+```
+
+**Na Windows**
+
+```shell
+python snake_game.py
+```
