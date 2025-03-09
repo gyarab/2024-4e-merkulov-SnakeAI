@@ -1,3 +1,24 @@
-# SNAKE AI
+# 🐍 SNAKE AI – Samohrací had
 
-Pokusit se o napsání hry snake, kde snake sám dohraje hru (to znamená zaplní celý prostor hracího pole). Snake se bude snažit najít optimální cestu k jablku a přitom se nezabít. Pomocí různých algoritmů se budu pokoušet o to aby snake dokázal najít jablko co nejoptimálněji a takto co nejlépe dohrál hru. V práci se budu snažit využít pomoc např. těchto algoritmů A* algoritmus (algoritmus najde nejkratší z bodu A do bodu B) a algoritmy na hledání Hamiltonovské kružnice (najde takovou cestu v grafu, která navštíví každý vrchol právě jednou a vrátí se na počáteční vrchol). Soucasti prace bude porovnani techto ruznzch algoritmu.
+## 🎯 Cíl projektu
+
+Cílem tohoto projektu je vytvořit **AI řízeného hada**, který **sám dokončí hru** tím, že zaplní celé hrací pole, aniž
+by narazil do sebe nebo do stěn. AI se bude snažit najít **co nejoptimálnější cestu** k jablku a zároveň přežít co
+nejdéle.
+
+## 🧠 Jak to funguje
+
+Had se pohybuje na základě pokročilých **algoritmů pro hledání cest**, které mu umožní efektivně navigovat po hrací
+ploše. AI bude průběžně vyhodnocovat situaci a volit nejlepší strategii.
+
+## 🏆 Použité algoritmy
+
+- **A* algoritmus** 🟢 – Hledá nejkratší cestu z bodu A do bodu B a optimalizuje pohyb.
+- **Hamiltonovská kružnice** 🔵 – Snaží se vytvořit cestu, která navštíví každé pole právě jednou a vrátí se na start.
+- **Další algoritmy** 🟠 – Experimentování s různými přístupy pro optimalizaci výkonu.
+
+## 🛠️ Použité technologie
+
+- **Krajta** 🐍
+- **Pygame** 🎮
+- **Algoritmy pro hledání cest** 📍  
