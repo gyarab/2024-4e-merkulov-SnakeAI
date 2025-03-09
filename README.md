@@ -1,8 +1,8 @@
-# 🐍 SNAKE AI – Samohrací had
+# 🐍 SNAKE AI
 
 ## 🎯 Cíl projektu
 
-Cílem tohoto projektu je vytvořit **AI řízeného hada**, který **sám dokončí hru** tím, že zaplní celé hrací pole, aniž
+Cílem tohoto projektu je vytvořit **AI hada**, který **sám dokončí hru** tím, že zaplní celé hrací pole, aniž
 by narazil do sebe nebo do stěn. AI se bude snažit najít **co nejoptimálnější cestu** k jablku a zároveň přežít co
 nejdéle.
 
