@@ -12,8 +12,9 @@ from graph import Graph
 
 # Text variables
 font = 'comicsans'
+stopwatch_text = 'Stopwatch'
 # Difficulty settings
-difficulty = 10
+difficulty = 40
 prev_path = 0
 # Game grid size
 number_of_nodes = 100
@@ -109,6 +110,11 @@ def game_to_graph(snake_game_body):
         snake_graph_body = (y * number_of_nodes_on_side + x)
         return snake_graph_body
 
+def graph_to_game(telo):
+    x = (telo % number_of_nodes_on_side) * cell_size
+    y = (telo // number_of_nodes_on_side) * cell_size
+    return (x, y)
+
 
 # food_spawn_places = free_for_food()
 # food_pos = random.choice(food_spawn_places)
@@ -133,7 +139,7 @@ path_for_following.reverse()
 path_for_following = neighbors_to_snake_body(path_for_following)
 food_pos = neighbors_to_snake_body(n_food_pos)
 
-follow_hamiltonian_cycle = False
+follow_hamiltonian_cycle = True
 
 ''''''
 # Graph initialization
@@ -180,17 +186,17 @@ hamiltonian_cylcle_order = [0, 1, 2, 3, 4, 5, 35, 34, 33, 32, 31, 6, 18, 19, 20,
                             25, 26, 27, 28, 9, 15, 14, 13, 12, 11, 10]
 '''
 # Initialize direction index for Hamiltonian cycle
-'''
+''''''
 for i in range(len(hamiltonian_cycle)):
     if hamiltonian_cycle[i] == snake_head:
         direction_index = i
         break
-'''
-direction_index = 0
+''''''
+#direction_index = 0
 score = 0
 moves = 0
 
-show_grid = False  # Flag to toggle grid
+show_grid = True  # Flag to toggle grid
 pause_game = False
 # Button to toggle grid visibility (now in top-right corner)
 button_rect = pygame.Rect(frame_size_x - 90, 10, 80, 30)  # Button moved to top-right corner
@@ -199,6 +205,29 @@ button_pause = pygame.Rect(frame_size_x - (frame_size_x // 2), 10, 80, 30)
 
 # Game Over
 def game_over():
+    font = pygame.font.SysFont('comicsans', 60, True)
+    winning_surface = font.render('YOU DIED', True, white)
+    winning_rect = winning_surface.get_rect()
+    winning_rect.center = (frame_size_x / 2, frame_size_y / 4)
+    game_window.blit(winning_surface, winning_rect)  # Adjust position as needed
+    pygame.display.update()  # Update the display to show the message
+    print(str(stopwatch_text))
+    print(str(score))
+    print(str(moves))
+    pygame.quit()
+    sys.exit()
+
+    ''''''
+    # Keep the window open until the player closes it
+    waiting = True
+    while waiting:
+        for winning_event in pygame.event.get():
+            if winning_event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.time.delay(100)
+    ''''''
+    '''
     my_font = pygame.font.SysFont('times new roman', 30)
     game_over_surface = my_font.render('YOU DIED', True, red)
     game_over_rect = game_over_surface.get_rect()
@@ -210,6 +239,7 @@ def game_over():
     time.sleep(3)
     pygame.quit()
     sys.exit()
+    '''
 
 
 # Score
@@ -238,8 +268,14 @@ def winning():
     winning_rect.midtop = (frame_size_x / 2, frame_size_y / 4)
     game_window.blit(winning_surface, winning_rect)  # Adjust position as needed
     pygame.display.update()  # Update the display to show the message
+    print(str(stopwatch_text))
+    print(str(score))
+    print(str(moves))
+    pygame.quit()
+    sys.exit()
 
     # Keep the window open until the player closes it
+    ''''''
     waiting = True
     while waiting:
         for winning_event in pygame.event.get():
@@ -247,6 +283,7 @@ def winning():
                 pygame.quit()
                 sys.exit()
         pygame.time.delay(100)
+    ''''''
 
 
 def no_path():
@@ -281,6 +318,7 @@ def pause():
 
 
 def show_stopwatch():
+    global stopwatch_text
     elapsed_time = time.time() - start_time
     minutes = int(elapsed_time // 60)
     seconds = int(elapsed_time % 60)
@@ -345,13 +383,13 @@ while True:
         if len(snake_body) >= 3:
             snake_body.pop()
 
-    # Spawning food on the screen
-
     # Update the food spawning logic
     if not food_spawn:
         if food_spawn_places:
             food_pos = random.choice(food_spawn_places)
             food_spawn = True
+            follow_hamiltonian_cycle = True
+            '''
             n_snake_head = game_to_neighbors(snake_head)
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
@@ -359,16 +397,11 @@ while True:
             path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side,
                           hamiltonian_cylcle_order)
             if path is None:
-                print("No path kokote")
-                print("Previous path: " + str(game_to_neighbors(prev_path)))
-                print("snake head: " + str(n_snake_head))
-                print("snake body: " + str(n_snake_body))
-                print("food position: " + str(n_food_pos))
-                path_for_following_debug = path.get_all_head_positions()
-                path_for_following_debug = path_for_following_debug.pop()
-                print("path: " + str(path_for_following_debug))
-
-                no_path()
+                follow_hamiltonian_cycle = True
+                for i in range(len(hamiltonian_cycle)):
+                    if hamiltonian_cycle[i] == snake_head:
+                        direction_index = i + 1
+                        break
             else:
                 final_tail_position = path.snake_positions[-1] if path.snake_positions else None
                 path_for_following = path.get_all_head_positions()
@@ -379,17 +412,16 @@ while True:
                 path_for_following.reverse()
                 tail = hamiltonian_cylcle_order[final_tail]
                 head = hamiltonian_cylcle_order[final_head]
-                '''
+                
                 path_for_following = neighbors_to_snake_body(path_for_following)
                 food_pos = neighbors_to_snake_body(n_food_pos)
                 snake_body = neighbors_to_snake_body(n_snake_body)
                 snake_head = neighbors_to_snake_body(n_snake_head)
                 direction_index = 0
-                '''
-                ''''''
+                
                 if tail > head:
                     if tail - head > len(snake_body) + 1:
-                        follow_hamiltonian_cycle = False
+                        follow_hamiltonian_cycle = True
                         direction_index = 0
                         path_to_check = game_to_graph(path_for_following)
                         path_for_following = neighbors_to_snake_body(path_for_following)
@@ -417,11 +449,9 @@ while True:
                             if hamiltonian_cycle[i] == snake_head:
                                 direction_index = i + 1
                                 break
-                                ''''''
+                                '''
         else:
             print("No valid food spawn places available.")
-
-    prev_path = path_for_following
 
     # Fill the game window
     game_window.fill(black)
@@ -553,14 +583,6 @@ while True:
     button_text = button_font.render('Pause', True, white)
     game_window.blit(button_text, (button_pause.x + 10, button_pause.y + 5))
 
-    # Game Over conditions
-    if snake_head[0] < 0 or snake_head[0] > frame_size_x - cell_size:
-        game_over()
-    if snake_head[1] < 0 or snake_head[1] > frame_size_y - cell_size:
-        game_over()
-    for block in snake_body[1:]:
-        if snake_head == block:
-            game_over()
 
     # Draw a line to separate UI from the grid
     pygame.draw.line(game_window, white, (0, 50), (frame_size_x, 50), 2)  # Separation line
@@ -571,8 +593,26 @@ while True:
     # Show number of moves
     show_moves(1, white, font, 30)
 
+    if show_grid:
+        for i in range(0, number_of_nodes):
+            cycle_font = pygame.font.SysFont(font, 20)
+            cycle_surface = cycle_font.render(str(hamiltonian_cylcle_order[i]), True, white)
+            x, y = graph_to_game(i)
+            cycle_rect = cycle_surface.get_rect(topleft=(x + cell_size - 20, y + 50 + cell_size - 20))
+            game_window.blit(cycle_surface, cycle_rect)
+
+
     # Show time
     show_stopwatch()
+
+    # Game Over conditions
+    if snake_head[0] < 0 or snake_head[0] > frame_size_x - cell_size:
+        game_over()
+    if snake_head[1] < 0 or snake_head[1] > frame_size_y - cell_size:
+        game_over()
+    for block in snake_body[1:]:
+        if snake_head == block:
+            game_over()
 
     # Refresh game screen
     pygame.display.update()
