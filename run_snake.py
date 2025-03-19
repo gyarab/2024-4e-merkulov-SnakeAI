@@ -1,6 +1,6 @@
 import subprocess
 
-output_file = "a_star"
+output_file = "statistics/a_star"
 game_path = "/home/ivan/PyCharm/PycharmProjects/RP/Snake_AI/.venv/bin/python"
 snake_game_script = "/home/ivan/PyCharm/PycharmProjects/RP/Snake_AI/snake_game.py"
 
