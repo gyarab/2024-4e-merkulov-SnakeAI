@@ -20,6 +20,7 @@ prev_path = 0
 number_of_nodes = 100
 number_of_nodes_on_side = 10
 
+
 # Window size
 frame_size_x = 900
 frame_size_y = 900
