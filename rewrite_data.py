@@ -2,12 +2,12 @@ import re
 
 def multiply_time_by_4(time_str):
     minutes, seconds = map(int, time_str.split(':'))
-    total_seconds = (minutes * 60 + seconds) * 2
+    total_seconds = (minutes * 60 + seconds) * 4
     new_minutes = total_seconds // 60
     new_seconds = total_seconds % 60
     return f"{new_minutes:02}:{new_seconds:02}"
 
-input_file = "statistics/a_star"
+input_file = "statistics/hamilton_cycle"
 output_file = "statistics/a_star_processed.csv"
 
 with open(input_file, "r") as f, open(output_file, "w") as out_f:
