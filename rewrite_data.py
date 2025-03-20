@@ -8,7 +8,7 @@ def multiply_time_by_4(time_str):
     return f"{new_minutes:02}:{new_seconds:02}"
 
 input_file = "statistics/hamilton_cycle"
-output_file = "statistics/a_star_processed.csv"
+output_file = "statistics/hamilton_cycle_processed.csv"
 
 with open(input_file, "r") as f, open(output_file, "w") as out_f:
     out_f.write("Time,Score,Moves\n")  # Add headers for Google Sheets
