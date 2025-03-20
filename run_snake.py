@@ -5,7 +5,7 @@ game_path = "/home/ivan/PyCharm/PycharmProjects/RP/Snake_AI/.venv/bin/python"
 snake_game_script = "/home/ivan/PyCharm/PycharmProjects/RP/Snake_AI/snake_game.py"
 
 with open(output_file, "w") as f:
-    for _ in range(300):
+    for _ in range(162):
         print(str(_))
         result = subprocess.run([game_path, snake_game_script], capture_output=True, text=True)
         lines = result.stdout.strip().split("\n")
