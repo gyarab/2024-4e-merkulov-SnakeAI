@@ -1,0 +1,13 @@
+\chapter{Závěr}
+
+V této práci jsem analyzoval a porovnal tři různé algoritmy pro řešení hry Snake: A*, Hamiltonovskou kružnici a algoritmus zkratek. Hodnotil jsem je z hlediska úspěšnosti dokončení hry a efektivity sbírání jablek. Při testování jsem zjistil, že samotný algoritmus A* nebyl nikdy úspěšný, protože had se dříve či později dostal do situace, kdy narazil do sebe. Ačkoliv A* efektivně hledal nejkratší cestu k jablku, nebyl schopen zajistit dlouhodo-\\ bě bezpečný pohyb hada.
+
+Hamiltonovská kružnice se ukázala jako stoprocentně spolehlivá strategie, která vždy vedla k úspěšnému dokončení hry. Jejím hlavním nedostatkem však byla nízká efektivita – had často prováděl zbytečně dlouhé tahy, což značně prodlužovalo dobu trvání hry.
+
+Nejlepším kompromisem se ukázal být algoritmus zkratek, který kombinuje Hamiltonov-\\skou kružnici s možností vytvářet optimalizované cesty pomocí modifikovaného algoritmu A*. Tento přístup vedl k dokončení hry v přibližně \(72\%\) případech a zároveň výrazně zkrátil počet tahů i celkovou dobu hry v porovnání s čistým následováním Hamiltonovské kružnice.
+
+Při implementaci jsem narazil na několik zásadních problémů. Nejnáročnější bylo nalezení Hamiltonovské kružnice pro dané herní pole. Tento problém patří mezi \(NP\)-úplné problé-\\my, což znamená, že neexistuje efektivní algoritmus pro jeho řešení v obecném případě. Musel jsem proto využít speciální postupy pro nalezení kružnice. Dalším problémem byla efektivní detekce možných zkratek, která musela respektovat pořadí vrcholů v Hamiltonov-\\ské kružnici. 
+
+Nakonec se mi podařilo vytvořit funkční a relativně efektivní řešení, přesto stále vidím prostor pro další zlepšení. Možným rozvojem projektu by bylo například dynamické upra-\\vování Hamiltonovské kružnice podle aktuální situace na herním poli nebo využití pokroči-\\lejších heuristik pro rozhodování o použití zkratek.
+
+Celkově hodnotím projekt jako úspěšný, protože se mi podařilo implementovat a otestovat různé strategie řízení hada, porovnat jejich výkonnost a identifikovat nejefektivnější přístup. Zároveň jsem získal cenné zkušenosti s algoritmy pro hledání cest a jejich aplikací na problém s dynamickým prostředím.
