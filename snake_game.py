@@ -14,7 +14,7 @@ from graph import Graph
 font = 'comicsans'
 stopwatch_text = 'Stopwatch'
 # Difficulty settings
-difficulty = 40
+difficulty = 20
 prev_path = 0
 # Game grid size
 number_of_nodes = 100
@@ -197,7 +197,7 @@ for i in range(len(hamiltonian_cycle)):
 score = 0
 moves = 0
 
-show_grid = True  # Flag to toggle grid
+show_grid = False  # Flag to toggle grid
 pause_game = False
 # Button to toggle grid visibility (now in top-right corner)
 button_rect = pygame.Rect(frame_size_x - 90, 10, 80, 30)  # Button moved to top-right corner
@@ -215,9 +215,6 @@ def game_over():
     print(str(stopwatch_text))
     print(str(score))
     print(str(moves))
-    pygame.quit()
-    sys.exit()
-    ''''''
     # Keep the window open until the player closes it
     waiting = True
     while waiting:
@@ -226,7 +223,6 @@ def game_over():
                 pygame.quit()
                 sys.exit()
         pygame.time.delay(100)
-    ''''''
 
 
 # Score
@@ -258,11 +254,6 @@ def winning():
     print(str(stopwatch_text))
     print(str(score))
     print(str(moves))
-    pygame.quit()
-    sys.exit()
-
-    # Keep the window open until the player closes it
-    ''''''
     waiting = True
     while waiting:
         for winning_event in pygame.event.get():
@@ -270,7 +261,6 @@ def winning():
                 pygame.quit()
                 sys.exit()
         pygame.time.delay(100)
-    ''''''
 
 
 def no_path():
@@ -375,14 +365,12 @@ while True:
         if food_spawn_places:
             food_pos = random.choice(food_spawn_places)
             food_spawn = True
-            follow_hamiltonian_cycle = True
-            '''
+            follow_hamiltonian_cycle = False
             n_snake_head = game_to_neighbors(snake_head)
             n_snake_body = game_to_neighbors(snake_body)
             n_food_pos = game_to_neighbors(food_pos)
             game_state = GameState(head_position=n_snake_head, snake_positions=n_snake_body, predecessor=None)
-            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side,
-                          hamiltonian_cylcle_order)
+            path = a_star(game_state, n_food_pos, number_of_nodes_on_side, number_of_nodes_on_side, hamiltonian_cylcle_order)
             if path is None:
                 follow_hamiltonian_cycle = True
                 for i in range(len(hamiltonian_cycle)):
@@ -399,16 +387,16 @@ while True:
                 path_for_following.reverse()
                 tail = hamiltonian_cylcle_order[final_tail]
                 head = hamiltonian_cylcle_order[final_head]
-                
+                '''
                 path_for_following = neighbors_to_snake_body(path_for_following)
                 food_pos = neighbors_to_snake_body(n_food_pos)
                 snake_body = neighbors_to_snake_body(n_snake_body)
                 snake_head = neighbors_to_snake_body(n_snake_head)
                 direction_index = 0
-
+                '''
                 if tail > head:
                     if tail - head > len(snake_body) + 1:
-                        follow_hamiltonian_cycle = True
+                        follow_hamiltonian_cycle = False
                         direction_index = 0
                         path_to_check = game_to_graph(path_for_following)
                         path_for_following = neighbors_to_snake_body(path_for_following)
@@ -436,8 +424,6 @@ while True:
                             if hamiltonian_cycle[i] == snake_head:
                                 direction_index = i + 1
                                 break
-                                ''''''
-                '''
         else:
             print("No valid food spawn places available.")
 

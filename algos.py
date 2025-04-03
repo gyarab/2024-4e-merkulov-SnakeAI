@@ -92,13 +92,13 @@ def a_star(game_state: GameState, apple_position: tuple[int, int], n_rows: int, 
             end_head_position = game_to_graph(neighbor.head_position, n_cols)
 
             if neighbor.head_position not in g_score or tentative_g_score < g_score[neighbor.head_position]:
-                #if hamiltonian_cycle_order[start_head_position] <= hamiltonian_cycle_order[end_head_position] or (hamiltonian_cycle_order[start_head_position] == (n_cols * n_cols) - 1 and hamiltonian_cycle_order[end_head_position] == 0):
-                g_score[neighbor.head_position] = tentative_g_score
-                f_score[neighbor.head_position] = tentative_g_score + heuristic(neighbor.head_position,
-                                                                                apple_position)
-                neighbor.predecessor = current
+                if hamiltonian_cycle_order[start_head_position] <= hamiltonian_cycle_order[end_head_position] or (hamiltonian_cycle_order[start_head_position] == (n_cols * n_cols) - 1 and hamiltonian_cycle_order[end_head_position] == 0):
+                    g_score[neighbor.head_position] = tentative_g_score
+                    f_score[neighbor.head_position] = tentative_g_score + heuristic(neighbor.head_position,
+                                                                                    apple_position)
+                    neighbor.predecessor = current
 
-                if neighbor not in [item.state for item in open_set]:
-                    heapq.heappush(open_set, PrioritizedItem(f_score[neighbor.head_position], neighbor))
+                    if neighbor not in [item.state for item in open_set]:
+                        heapq.heappush(open_set, PrioritizedItem(f_score[neighbor.head_position], neighbor))
 
     return None  # No path found
